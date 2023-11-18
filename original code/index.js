@@ -1,3 +1,12 @@
+/*!
+ * Pacman - HTML5 Game
+ * https://passer-by.com/pacman/
+ *
+ * Copyright (c) 2016-present, HaoLe Zheng
+ * Released under the MIT License.
+ * https://github.com/mumuy/pacman/blob/master/LICENSE
+*/
+
 //主程序,业务逻辑
 (function(){
 	var _COIGIG = [		//关卡
@@ -565,6 +574,24 @@
 				}
 			}
 		});
+		//版权信息
+		stage.createItem({
+			x:game.width-10,
+			y:game.height-5,
+			draw:function(context){
+				var text = '© passer-by.com';
+				context.font = '12px/20px PressStart2P';
+				context.textAlign = 'left';
+				context.textBaseline = 'top';
+				context.fillStyle = '#AAA';
+				this.width = context.measureText(text).width;
+				this.x = game.width-this.width-10;
+				this.y = game.height-20-5;
+				context.fillText(text,this.x,this.y);
+			}
+		}).bind('click',function(){
+			window.open('https://passer-by.com');
+		});
 		//事件绑定
 		stage.bind('keydown',function(e){
 			switch(e.keyCode){
@@ -587,25 +614,10 @@
 							if(map&&!map.get(item.coord.x,item.coord.y)&&!map.get(player.coord.x,player.coord.y)){
 								var dx = item.x-player.x;
 								var dy = item.y-player.y;
-								if(dx*dx+dy*dy<750 && item.status!=4){		//物体检测
-									//吃到正確的字
-									if(item._id == ans%4+3){
+								if(dx*dx+dy*dy<750&&item.status!=4){		//物体检测
+									if(item.status==3){
 										item.status = 4;
 										_SCORE += 10;
-										ans++;
-										if(item._id == 3)
-										{
-											setWordR += 4;
-										}else if(item._id == 4)
-										{
-											setWordO += 4;
-										}else if(item._id == 5)
-										{
-											setWordB += 4;
-										}else if(item._id ==6)
-										{
-											setWordP += 4;
-										}
 									}else{
 										stage.status = 3;
 										stage.timeout = 30;
@@ -617,7 +629,6 @@
 							game.nextStage();
 						}
 					}else if(stage.status==3){		//场景临时状态
-						//吃錯字
 						if(!stage.timeout){
 							_LIFE--;
 							if(_LIFE){
@@ -704,26 +715,23 @@
 			});
 			//物品地图
 			beans = stage.createMap({
-				x: 60,
-				y: 10,
-				data: config['map'],
-				frames: 8,
-				draw: function(context)
-				{
-					for(var j=0; j<this.y_length; j++)
-					{
-						for(var i=0; i<this.x_length; i++)
-						{
-							if(!this.get(i, j))
-							{
+				x:60,
+				y:10,
+				data:config['map'],
+				frames:8,
+				draw:function(context){
+					for(var j=0; j<this.y_length; j++){
+						for(var i=0; i<this.x_length; i++){
+							if(!this.get(i,j)){
 								var pos = this.coord2position(i,j);
 								context.fillStyle = "#F5F5DC";
-								if(config['goods'][i+','+j])
-								{
+								if(config['goods'][i+','+j]){
 									context.beginPath();
-									context.arc(pos.x, pos.y, 3+this.times%2, 0, 2*Math.PI, true);
+									context.arc(pos.x,pos.y,3+this.times%2,0,2*Math.PI,true);
 									context.fill();
 									context.closePath();
+								}else{
+									context.fillRect(pos.x-2,pos.y-2,4,4);
 								}
 							}
 						}
@@ -732,41 +740,38 @@
 			});
 			//关卡得分
 			stage.createItem({
-				x: 690,
-				y: 80,
-				draw: function(context){
-					context.font = 'bold 48px PressStart2P';
+				x:690,
+				y:80,
+				draw:function(context){
+					context.font = 'bold 24px PressStart2P';
 					context.textAlign = 'left';
 					context.textBaseline = 'bottom';
 					context.fillStyle = '#C33';
-					context.fillText('得分', this.x, this.y);
-
+					context.fillText('SCORE',this.x,this.y);
 					context.font = '24px PressStart2P';
 					context.textAlign = 'left';
 					context.textBaseline = 'top';
 					context.fillStyle = '#FFF';
-					context.fillText(_SCORE, this.x+60, this.y+30);
-
-					context.font = 'bold 48px PressStart2P';
+					context.fillText(_SCORE,this.x+12,this.y+10);
+					context.font = 'bold 24px PressStart2P';
 					context.textAlign = 'left';
 					context.textBaseline = 'bottom';
 					context.fillStyle = '#C33';
-					context.fillText('關卡', this.x, this.y+120);
-
+					context.fillText('LEVEL',this.x,this.y+72);
 					context.font = '24px PressStart2P';
 					context.textAlign = 'left';
 					context.textBaseline = 'top';
 					context.fillStyle = '#FFF';
-					context.fillText('靜夜思', this.x+12, this.y+135);
+					context.fillText(index+1,this.x+12,this.y+82);
 				}
 			});
 			//状态文字
 			stage.createItem({
-				x: 690,
-				y: 300,
-				frames: 25,
+				x:690,
+				y:285,
+				frames:25,
 				draw:function(context){
-					if(stage.status==2 && this.times%2){
+					if(stage.status==2&&this.times%2){
 						context.font = '24px PressStart2P';
 						context.textAlign = 'left';
 						context.textBaseline = 'center';
@@ -777,15 +782,14 @@
 			});
 			//生命值
 			stage.createItem({
-				x: 705,
-				y: 510,
-				width: 30,
-				height: 30,
+				x:705,
+				y:510,
+				width:30,
+				height:30,
 				draw:function(context){
-					var max = Math.min(_LIFE-1, 5);
+					var max = Math.min(_LIFE-1,5);
 					for(var i=0;i<max;i++){
-						var x = this.x+40*i;
-						var y = this.y;
+						var x=this.x+40*i,y=this.y;
 						context.fillStyle = '#FFE600';
 						context.beginPath();
 						context.arc(x,y,this.width/2,.15*Math.PI,-.15*Math.PI,false);
@@ -806,13 +810,14 @@
 			for(var i=0;i<4;i++){
 				stage.createItem({
 					width:30,
-					height:40,
+					height:30,
 					orientation:3,
 					color:_COLOR[i],
 					location:map,
 					coord:{x:12+i,y:14},
 					vector:{x:12+i,y:14},
 					type:2,
+					frames:10,
 					speed:1,
 					timeout:Math.floor(Math.random()*120),
 					update:function(){
@@ -891,38 +896,51 @@
 						this.x += this.speed*_COS[this.orientation];
 						this.y += this.speed*_SIN[this.orientation];
 					},
-					draw: function(context){
+					draw:function(context){
 						var isSick = false;
 						if(this.status==3){
 							isSick = this.timeout>80||this.times%2?true:false;
 						}
 						if(this.status!=4){
 							context.fillStyle = isSick?'#BABABA':this.color;
-							//繪製NPC
 							context.beginPath();
-							context.arc(this.x, this.y, this.width*0.5, 0, Math.PI, true);
-							context.lineTo(this.x-this.width*0.5, this.y+this.height*0.4);
-							context.lineTo(this.x+this.width*0.5, this.y+this.height*0.4);
+							context.arc(this.x,this.y,this.width*.5,0,Math.PI,true);
+							switch(this.times%2){
+								case 0:
+								context.lineTo(this.x-this.width*.5,this.y+this.height*.4);
+								context.quadraticCurveTo(this.x-this.width*.4,this.y+this.height*.5,this.x-this.width*.2,this.y+this.height*.3);
+								context.quadraticCurveTo(this.x,this.y+this.height*.5,this.x+this.width*.2,this.y+this.height*.3);
+								context.quadraticCurveTo(this.x+this.width*.4,this.y+this.height*.5,this.x+this.width*.5,this.y+this.height*.4);
+								break;
+								case 1:
+								context.lineTo(this.x-this.width*.5,this.y+this.height*.3);
+								context.quadraticCurveTo(this.x-this.width*.25,this.y+this.height*.5,this.x,this.y+this.height*.3);
+								context.quadraticCurveTo(this.x+this.width*.25,this.y+this.height*.5,this.x+this.width*.5,this.y+this.height*.3);
+								break;
+							}
 							context.fill();
 							context.closePath();
-							//NPC上的文字
-							context.fillStyle = 'black';
-							context.font = '8px';
-							if(this._id == 3)
-							{
-								context.fillText(Word[setWordR], this.x-this.width*0.4, this.y-this.height*0.35);
-							}else if(this._id == 4)
-							{
-								context.fillText(Word[setWordO], this.x-this.width*0.4, this.y-this.height*0.35);
-							}else if(this._id == 5)
-							{
-								context.fillText(Word[setWordB], this.x-this.width*0.4, this.y-this.height*0.35);
-							}else if(this._id == 6)
-							{
-								context.fillText(Word[setWordP], this.x-this.width*0.4, this.y-this.height*0.35);
-							}
 						}
 						context.fillStyle = '#FFF';
+						if(isSick){
+							context.beginPath();
+							context.arc(this.x-this.width*.15,this.y-this.height*.21,this.width*.08,0,2*Math.PI,false);
+							context.arc(this.x+this.width*.15,this.y-this.height*.21,this.width*.08,0,2*Math.PI,false);
+							context.fill();
+							context.closePath();
+						}else{
+							context.beginPath();
+							context.arc(this.x-this.width*.15,this.y-this.height*.21,this.width*.12,0,2*Math.PI,false);
+							context.arc(this.x+this.width*.15,this.y-this.height*.21,this.width*.12,0,2*Math.PI,false);
+							context.fill();
+							context.closePath();
+							context.fillStyle = '#000';
+							context.beginPath();
+							context.arc(this.x-this.width*(.15-.04*_COS[this.orientation]),this.y-this.height*(.21-.04*_SIN[this.orientation]),this.width*.07,0,2*Math.PI,false);
+							context.arc(this.x+this.width*(.15+.04*_COS[this.orientation]),this.y-this.height*(.21-.04*_SIN[this.orientation]),this.width*.07,0,2*Math.PI,false);
+							context.fill();
+							context.closePath();
+						}
 					}
 				});
 			}
@@ -955,13 +973,17 @@
 							this.y -= map.size*(map.y_length-1)*_SIN[this.orientation];
 						}
 					}else{
-						if(config['goods'][this.coord.x+','+this.coord.y]){	//吃到能量豆
-							items.forEach(function(item){
-								if(item.status==1||item.status==3){	//如果NPC为正常状态，则置为临时状态
-									item.timeout = 450;
-									item.status = 3;
-								}
-							});
+						if(!beans.get(this.coord.x,this.coord.y)){	//吃豆
+							_SCORE++;
+							beans.set(this.coord.x,this.coord.y,1);
+							if(config['goods'][this.coord.x+','+this.coord.y]){	//吃到能量豆
+								items.forEach(function(item){
+									if(item.status==1||item.status==3){	//如果NPC为正常状态，则置为临时状态
+										item.timeout = 450;
+										item.status = 3;
+									}
+								});
+							}
 						}
 						this.x += this.speed*_COS[this.orientation];
 						this.y += this.speed*_SIN[this.orientation];
@@ -977,7 +999,7 @@
 							context.arc(this.x,this.y,this.width/2,(.5*this.orientation+.01)*Math.PI,(.5*this.orientation-.01)*Math.PI,false);
 						}
 					}else{	//玩家被吃
-						if(stage.timeout){
+						if(stage.timeout) {
 							context.arc(this.x,this.y,this.width/2,(.5*this.orientation+1-.02*stage.timeout)*Math.PI,(.5*this.orientation-1+.02*stage.timeout)*Math.PI,false);
 						}
 					}
