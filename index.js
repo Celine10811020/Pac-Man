@@ -987,26 +987,60 @@
 				}
 			});
 			//事件绑定
-			stage.bind('keydown',function(e){
+			stage.bind('keydown', function(e){
+				event.stopPropagation();
 				switch(e.keyCode){
 					case 13: //回车
 					case 32: //空格
 					this.status = this.status==2?1:2;
 					break;
 					case 39: //右
-					player.control = {orientation:0};
+					directionR = 1;
 					break;
 					case 40: //下
-					player.control = {orientation:1};
+					directionD = 1;
 					break;
 					case 37: //左
-					player.control = {orientation:2};
+					directionL = 1;
 					break;
 					case 38: //上
-					player.control = {orientation:3};
+					directionU = 1;
 					break;
 				}
 			});
+			stage.bind('keyup', function(e){
+				switch(e.keyCode){
+					case 39: //右
+					directionR = 0;
+					break;
+					case 40: //下
+					directionD = 0;
+					break;
+					case 37: //左
+					directionL = 0;
+					break;
+					case 38: //上
+					directionU = 0;
+					break;
+				}
+			});
+
+			setInterval(direction, 10);
+
+			function direction(){
+				if(directionR){
+					player.control = {orientation:0};
+				}
+				if(directionD){
+					player.control = {orientation:1};
+				}
+				if(directionL){
+					player.control = {orientation:2};
+				}
+				if(directionU){
+					player.control = {orientation:3};
+				}
+			}
 		});
 	})();
 	//结束画面

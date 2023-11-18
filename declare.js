@@ -4,6 +4,12 @@ var setWordR = 0;
 var setWordO = 1;
 var setWordB = 2;
 var setWordP = 3;
+
+var directionU = 0;
+var directionD = 0;
+var directionL = 0;
+var directionR = 0;
+
 var Word = [];
 
 Word[0] = "床";
